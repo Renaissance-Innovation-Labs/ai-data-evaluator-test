@@ -8,10 +8,10 @@ export function SubmittedScreen({ onReset }: SubmittedScreenProps) {
       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-success)]/20 text-2xl text-[var(--color-success)]">
         ✓
       </div>
-      <h1 className="text-2xl font-semibold text-white">Thank you</h1>
+      <h1 className="text-2xl font-semibold text-white">Submission received</h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Your evaluation file has been downloaded. Send it to your recruiter to
-        complete the process.
+        Your JSON export was downloaded. Email that file to your recruiter. If any
+        attachments were too large to embed, send those files in the same email.
       </p>
       <button
         type="button"

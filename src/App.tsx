@@ -1,29 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { scenarios } from './data/scenarios'
 import type { EvaluationSession } from './types'
 import { loadSession, saveSession } from './utils/storage'
-import { createEmptyReview } from './utils/review'
+import { createSession } from './utils/session'
 import { WelcomeScreen } from './components/WelcomeScreen'
-import { EvaluationWorkspace } from './components/EvaluationWorkspace'
+import { ValidationWorkspace } from './components/ValidationWorkspace'
 import { SubmittedScreen } from './components/SubmittedScreen'
 import { AdminPanel } from './components/AdminPanel'
 
 type AppPhase = 'welcome' | 'workspace' | 'submitted'
-
-function buildInitialSession(
-  candidate: EvaluationSession['candidate'],
-): EvaluationSession {
-  const reviews: EvaluationSession['reviews'] = {}
-  for (const s of scenarios) {
-    reviews[s.id] = createEmptyReview(s.id)
-  }
-  return {
-    candidate,
-    startedAt: new Date().toISOString(),
-    reviews,
-    submittedAt: null,
-  }
-}
 
 export default function App() {
   const [phase, setPhase] = useState<AppPhase>('welcome')
@@ -39,7 +23,7 @@ export default function App() {
   }, [])
 
   const handleStart = useCallback((candidate: EvaluationSession['candidate']) => {
-    const next = buildInitialSession(candidate)
+    const next = createSession(candidate)
     saveSession(next)
     setSession(next)
     setPhase('workspace')
@@ -61,7 +45,7 @@ export default function App() {
 
   if (phase === 'workspace' && session) {
     return (
-      <EvaluationWorkspace
+      <ValidationWorkspace
         session={session}
         onSessionChange={setSession}
         onSubmitted={() => setPhase('submitted')}

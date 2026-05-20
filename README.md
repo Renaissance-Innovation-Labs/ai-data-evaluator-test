@@ -1,6 +1,6 @@
-# AI Data Evaluator — Skills Test
+# ValidateAI — Data Evaluator Skills Test
 
-A web app for onboarding candidates who will review AI agent outputs: flag irregularities, document strengths, and submit structured feedback — similar to a production review console.
+A web dashboard that simulates **contract and invoice validation** with AI-generated field checks, **citations**, and an **approval gate**. Candidates review agent output like in production, then submit findings in **their own format** (sheet, markdown, doc, etc.) — no structured template.
 
 ## Quick start
 
@@ -9,35 +9,29 @@ npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (default `http://localhost:5173`).
-
 ## Candidate flow
 
-1. Enter name and email on the welcome screen.
-2. Work through **4 scenarios** (support triage, contract extraction, review synthesis, research Q&A).
-3. For each scenario, read **Context**, **Agent output**, and **Trace** tabs.
-4. Log **issues** (category, severity, location, description) and **what went well**.
-5. Set overall quality and confidence ratings, plus summary notes.
-6. When all scenarios are complete, **Submit** downloads a JSON file to send to the recruiter.
+1. Open the **validation queue** (4 cases: vendors, invoices, agent status, gate recommendation).
+2. **Review** each case: source documents, validation report, citations, approval gate, agent trace.
+3. Produce an evaluation report offline in whatever format they prefer.
+4. **Submit** via paste and/or file upload → downloads JSON for the recruiter.
 
-Progress auto-saves in the browser (`localStorage`).
+Requirements to submit: open ≥3 cases, and either 100+ characters pasted or at least one attachment.
 
 ## Hiring team
 
-- **Scoring rubric:** open the app with `#admin` (e.g. `http://localhost:5173/#admin`) for planted-issue hints per scenario.
-- **Submissions:** JSON files include candidate info, all reviews, and timestamps.
-- **Customize scenarios:** edit `src/data/scenarios.ts` to match your product’s agent types and data shapes.
+- **Rubric & planted issues:** `http://localhost:5173/#admin`
+- **Score on:** issue quality, report clarity, attention to detail, balanced feedback (issues + what’s good).
+- **Customize cases:** `src/data/validationCases.ts`
 
 ## Deploy
 
 ```bash
 npm run build
-npm run preview
 ```
 
-Deploy the `dist/` folder to any static host (Vercel, Netlify, S3, etc.).
+Serve `dist/` on any static host.
 
-## Tech stack
+## Stack
 
-- React 19 + TypeScript + Vite
-- Tailwind CSS v4
+React 19, TypeScript, Vite, Tailwind CSS v4

@@ -1,4 +1,4 @@
-import { scenarios } from '../data/scenarios'
+import { validationCases } from '../data/validationCases'
 
 export function AdminPanel() {
   return (
@@ -7,23 +7,56 @@ export function AdminPanel() {
         <p className="text-sm font-medium text-[var(--color-warning)] uppercase">
           Hiring team — scoring rubric
         </p>
-        <h1 className="mt-2 text-2xl font-semibold text-white">Evaluator hints</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-white">
+          Contract &amp; invoice validation — evaluator hints
+        </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Access via <code className="text-[var(--color-accent)]">#admin</code> on the
-          app URL. Do not share with candidates.
+          URL suffix <code className="text-[var(--color-accent)]">#admin</code>. Do not
+          share with candidates.
         </p>
 
+        <section className="mt-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-5">
+          <h2 className="font-medium text-white">What to score</h2>
+          <ul className="mt-3 list-inside list-disc space-y-2 text-sm text-[var(--color-muted)]">
+            <li>
+              <strong className="text-white">Issue quality</strong> — specific
+              (field, citation ID, clause); severity calibrated; not vague.
+            </li>
+            <li>
+              <strong className="text-white">Report quality</strong> — clear structure
+              in their chosen format; actionable for an engineering team.
+            </li>
+            <li>
+              <strong className="text-white">Attention to detail</strong> — cross-doc
+              checks, approval gate vs field checks, citation mismatches.
+            </li>
+            <li>
+              <strong className="text-white">Balance</strong> — notes correct discount
+              math, valid FX, etc., not only failures.
+            </li>
+            <li>
+              <strong className="text-white">Format choice</strong> — experienced
+              evaluators often use spreadsheets with case IDs; either is fine.
+            </li>
+          </ul>
+        </section>
+
         <div className="mt-8 space-y-6">
-          {scenarios.map((scenario) => (
+          {validationCases.map((c) => (
             <article
-              key={scenario.id}
+              key={c.id}
               className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-5"
             >
-              <h2 className="font-medium text-white">{scenario.title}</h2>
-              <p className="text-xs text-[var(--color-muted)]">{scenario.id}</p>
-              {scenario.evaluatorHints && (
+              <h2 className="font-medium text-white">
+                {c.caseRef} — {c.vendor}
+              </h2>
+              <p className="text-xs text-[var(--color-muted)]">
+                Gate: {c.agentValidation.approvalGate.recommended} · Agent status:{' '}
+                {c.agentValidation.status}
+              </p>
+              {c.evaluatorHints && (
                 <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-[#c5d0de]">
-                  {scenario.evaluatorHints.map((hint) => (
+                  {c.evaluatorHints.map((hint) => (
                     <li key={hint}>{hint}</li>
                   ))}
                 </ul>
@@ -31,17 +64,6 @@ export function AdminPanel() {
             </article>
           ))}
         </div>
-
-        <section className="mt-10 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-5">
-          <h2 className="font-medium text-white">What to look for in submissions</h2>
-          <ul className="mt-3 space-y-2 text-sm text-[var(--color-muted)]">
-            <li>Specific locations cited (field names, sections) — not vague complaints</li>
-            <li>Balance of issues and positives on each scenario</li>
-            <li>Severity calibration (e.g. refund promise = high/critical)</li>
-            <li>Whether trace tab was used (research scenario)</li>
-            <li>Summary notes that show judgment, not only checkbox finding</li>
-          </ul>
-        </section>
 
         <a
           href="#"

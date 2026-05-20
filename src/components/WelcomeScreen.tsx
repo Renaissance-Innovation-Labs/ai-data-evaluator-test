@@ -29,44 +29,40 @@ export function WelcomeScreen({ initialCandidate, onStart }: WelcomeScreenProps)
 
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-12">
-      <div className="mb-8">
-        <p className="text-sm font-medium tracking-wide text-[var(--color-accent)] uppercase">
-          Evaluation test
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">
-          Agent data review
-        </h1>
-        <p className="mt-4 leading-relaxed text-[var(--color-muted)]">
-          This exercise simulates the product you would use daily: reviewing
-          outputs from AI agents, flagging irregularities, and documenting what
-          works well. You will evaluate four realistic scenarios. There is no
-          single correct answer — we are assessing your attention to detail,
-          judgment, and clarity of feedback.
-        </p>
-      </div>
+      <p className="text-sm font-medium tracking-wide text-[var(--color-accent)] uppercase">
+        Skills assessment
+      </p>
+      <h1 className="mt-2 text-3xl font-semibold text-white">
+        Contract &amp; invoice validation review
+      </h1>
+      <p className="mt-4 leading-relaxed text-[var(--color-muted)]">
+        You are evaluating a simulated version of our agent validation product. Review
+        how the AI validated contracts against invoices — including field checks,
+        citations, and approval gate recommendations — then submit your findings in
+        whatever format you normally use (spreadsheet, markdown, document, etc.).
+      </p>
 
-      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-6">
-        <h2 className="text-lg font-medium text-white">What you will do</h2>
+      <div className="mt-8 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-6">
+        <h2 className="text-lg font-medium text-white">How this test works</h2>
         <ul className="mt-4 space-y-3 text-sm text-[var(--color-muted)]">
-          <li className="flex gap-3">
-            <span className="text-[var(--color-accent)]">1.</span>
-            Read the source context, agent output, and reasoning trace for each scenario.
+          <li>
+            <span className="font-medium text-white">Explore the dashboard</span> — open
+            validation cases like you would in the live product.
           </li>
-          <li className="flex gap-3">
-            <span className="text-[var(--color-accent)]">2.</span>
-            Log issues with category, severity, and where you found them.
+          <li>
+            <span className="font-medium text-white">Review agent output</span> — check
+            validation status, field comparisons, citations, and the approval gate.
           </li>
-          <li className="flex gap-3">
-            <span className="text-[var(--color-accent)]">3.</span>
-            Note what the agent did well — not only problems.
-          </li>
-          <li className="flex gap-3">
-            <span className="text-[var(--color-accent)]">4.</span>
-            Rate overall quality and submit a JSON file to your recruiter.
+          <li>
+            <span className="font-medium text-white">Report your evaluation</span> — we
+            do not provide a template. Use your own sheet, doc, or notes. Submit via
+            paste and/or file upload when finished.
           </li>
         </ul>
         <p className="mt-4 text-xs text-[var(--color-muted)]">
-          Allow ~45–60 minutes. Progress saves automatically in this browser.
+          We assess quality of issues identified, clarity of your report, attention to
+          detail, and whether you note what the agent did well — not only errors.
+          Allow ~45–60 minutes.
         </p>
       </div>
 
@@ -106,7 +102,7 @@ export function WelcomeScreen({ initialCandidate, onStart }: WelcomeScreenProps)
           type="submit"
           className="w-full rounded-lg bg-[var(--color-accent)] px-4 py-3 font-medium text-white transition hover:brightness-110"
         >
-          Begin evaluation
+          Open validation dashboard
         </button>
       </form>
     </div>
