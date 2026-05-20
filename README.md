@@ -1,28 +1,27 @@
-# ValidateAI — Data Evaluator Skills Test
+# ValidateAI — Evaluation Dashboard
 
-A web dashboard that simulates **contract and invoice validation** with AI-generated field checks, **citations**, and an **approval gate**. Candidates review agent output like in production, then submit findings in **their own format** (sheet, markdown, doc, etc.) — no structured template.
+A standalone web dashboard simulating AI-powered **contract**, **invoice**, and **exception** validation: field checks, citations, exceptions, approval gate, and agent trace. No sign-in or submission flow — open the app and review the data.
 
-## Quick start
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Candidate flow
+## Dashboard
 
-1. Open the **validation queue** (4 cases: vendors, invoices, agent status, gate recommendation).
-2. **Review** each case: source documents, validation report, citations, approval gate, agent trace.
-3. Produce an evaluation report offline in whatever format they prefer.
-4. **Submit** via paste and/or file upload → downloads JSON for the recruiter.
+- **Validation queue** — filter by contract, invoice, or exception cases
+- **Agent insights** — status breakdown, top exception codes, gate recommendations
+- **Case detail** — source documents, validation report, citations, exceptions, approval gate, trace
 
-Requirements to submit: open ≥3 cases, and either 100+ characters pasted or at least one attachment.
+## Hiring rubric (internal)
 
-## Hiring team
+`http://localhost:5173/#admin` — planted-issue hints per case.
 
-- **Rubric & planted issues:** `http://localhost:5173/#admin`
-- **Score on:** issue quality, report clarity, attention to detail, balanced feedback (issues + what’s good).
-- **Customize cases:** `src/data/validationCases.ts`
+## Customize
+
+Edit `src/data/validationCases.ts` to match your product’s data shape and scenarios.
 
 ## Deploy
 
@@ -30,8 +29,4 @@ Requirements to submit: open ≥3 cases, and either 100+ characters pasted or at
 npm run build
 ```
 
-Serve `dist/` on any static host.
-
-## Stack
-
-React 19, TypeScript, Vite, Tailwind CSS v4
+Serve the `dist/` folder on any static host.

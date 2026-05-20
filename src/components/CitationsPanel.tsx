@@ -4,6 +4,7 @@ const docLabels: Record<Citation['sourceDoc'], string> = {
   contract: 'Contract',
   invoice: 'Invoice',
   purchase_order: 'Purchase order',
+  exception_log: 'Exception log',
 }
 
 interface CitationsPanelProps {

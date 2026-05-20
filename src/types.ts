@@ -2,17 +2,21 @@ export type GateDecision = 'approve' | 'reject' | 'hold_for_review'
 
 export type ValidationStatus = 'pass' | 'fail' | 'partial'
 
-export type CaseStatus = 'pending_review' | 'in_review' | 'reviewed'
+export type CaseType = 'contract' | 'invoice' | 'exception'
 
-export interface CandidateInfo {
-  fullName: string
-  email: string
+export type ExceptionSeverity = 'info' | 'warning' | 'critical'
+
+export interface ValidationException {
+  code: string
+  severity: ExceptionSeverity
+  message: string
+  suggestedAction?: string
 }
 
 export interface Citation {
   id: string
   label: string
-  sourceDoc: 'contract' | 'invoice' | 'purchase_order'
+  sourceDoc: 'contract' | 'invoice' | 'purchase_order' | 'exception_log'
   excerpt: string
   supportsClaim: string
 }
@@ -41,6 +45,7 @@ export interface AgentValidation {
   summary: string
   fieldChecks: FieldCheck[]
   citations: Citation[]
+  exceptions: ValidationException[]
   approvalGate: ApprovalGate
   trace: string
 }
@@ -49,11 +54,13 @@ export interface SourceDocuments {
   contract: { title: string; body: string }
   invoice: { title: string; body: string }
   purchaseOrder?: { title: string; body: string }
+  exceptionLog?: { title: string; body: string }
 }
 
 export interface ValidationCase {
   id: string
   caseRef: string
+  caseType: CaseType
   vendor: string
   contractId: string
   invoiceNumber: string
@@ -64,26 +71,10 @@ export interface ValidationCase {
   evaluatorHints?: string[]
 }
 
-export interface ReportAttachment {
-  name: string
-  mimeType: string
-  sizeBytes: number
-  /** Included when under size cap */
-  dataBase64?: string
-}
-
-export interface CandidateReport {
-  formatNote: string
-  pastedContent: string
-  attachments: ReportAttachment[]
-}
-
-export interface EvaluationSession {
-  candidate: CandidateInfo
-  startedAt: string
-  casesOpened: string[]
-  report: CandidateReport
-  submittedAt: string | null
-}
-
-export type DetailTab = 'documents' | 'validation' | 'citations' | 'approval' | 'trace'
+export type DetailTab =
+  | 'documents'
+  | 'validation'
+  | 'citations'
+  | 'exceptions'
+  | 'approval'
+  | 'trace'

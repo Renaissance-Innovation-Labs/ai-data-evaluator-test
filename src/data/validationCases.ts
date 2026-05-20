@@ -4,10 +4,11 @@ export const validationCases: ValidationCase[] = [
   {
     id: 'case-2401',
     caseRef: 'VAL-2025-2401',
+    caseType: 'invoice',
     vendor: 'Nexus Cloud Services LLC',
     contractId: 'MSA-NSX-2024-118',
     invoiceNumber: 'INV-NSX-8842',
-    amountUsd: 14400,
+    amountUsd: 46350,
     dueDate: '2025-04-15',
     documents: {
       contract: {
@@ -16,44 +17,35 @@ export const validationCases: ValidationCase[] = [
 
 §5.2 Overage. API calls beyond 2M/month billed at $0.012 per call, invoiced monthly in arrears.
 
-§6. Payment Terms. Net 30 from invoice date. Late payments accrue 1.0% monthly interest.
+§6. Payment Terms. Net 30 from invoice date.
 
-§8.2 Authorized Signatory. Invoices require matching PO reference PO-7721 and signature of Client AP Manager or delegate listed in Exhibit B.`,
+§8.2 Authorized Signatory. Invoices require matching PO reference PO-7721.`,
       },
       invoice: {
         title: 'Invoice INV-NSX-8842',
-        body: `Vendor: Nexus Cloud Services LLC
-Invoice date: 2025-03-15 | Due: 2025-04-14
-PO reference: PO-7721
+        body: `Invoice date: 2025-03-15 | Due: 2025-04-14 | PO: PO-7721
 
-Line items:
 1. Platform fee (Mar 2025) — $4,800.00
 2. Platform fee (Apr 2025) — $4,800.00
 3. API overage Feb 2025 (2,450,000 calls @ $0.015) — $36,750.00
 
-Subtotal: $46,350.00
-Tax: $0.00
-TOTAL DUE: $46,350.00
-
-Remit to: Nexus Cloud Services LLC`,
+TOTAL DUE: $46,350.00`,
       },
       purchaseOrder: {
         title: 'Purchase Order PO-7721',
         body: `Approved monthly platform cap: $4,800
-Approved overage rate: $0.012 per API call
-Budget owner: Dana Reeves, AP Manager`,
+Approved overage rate: $0.012 per API call`,
       },
     },
     agentValidation: {
       status: 'pass',
       processedAt: '2025-03-16T09:14:22Z',
       modelVersion: 'validate-v2.4.1',
-      summary:
-        'Invoice aligns with contract fee schedule. Overage within tolerance. Recommend approval.',
+      summary: 'Invoice aligns with contract fee schedule. Recommend approval.',
       fieldChecks: [
         {
-          field: 'Platform fee (monthly)',
-          contractValue: '$4,800',
+          field: 'Platform fee',
+          contractValue: '$4,800/mo',
           invoiceValue: '$4,800 × 2 lines',
           match: true,
           agentVerdict: 'Matches §5.1',
@@ -64,16 +56,8 @@ Budget owner: Dana Reeves, AP Manager`,
           contractValue: '$0.012/call',
           invoiceValue: '$0.015/call',
           match: true,
-          agentVerdict: 'Within 25% tolerance band per policy POL-OV-03',
+          agentVerdict: 'Within tolerance per POL-OV-03',
           citationId: 'cit-2',
-        },
-        {
-          field: 'Payment terms',
-          contractValue: 'Net 30',
-          invoiceValue: 'Due 2025-04-14 (30 days)',
-          match: true,
-          agentVerdict: 'Aligned',
-          citationId: 'cit-3',
         },
       ],
       citations: [
@@ -82,46 +66,36 @@ Budget owner: Dana Reeves, AP Manager`,
           label: '§5.1 Fees',
           sourceDoc: 'contract',
           excerpt: 'Monthly platform fee: $4,800 USD',
-          supportsClaim: 'Platform fee matches contract',
+          supportsClaim: 'Platform fee matches',
         },
         {
           id: 'cit-2',
           label: '§5.2 Overage',
           sourceDoc: 'contract',
-          excerpt: 'API calls beyond 2M/month billed at $0.012 per call',
-          supportsClaim: 'Overage rate validated',
-        },
-        {
-          id: 'cit-3',
-          label: '§6 Payment Terms',
-          sourceDoc: 'contract',
-          excerpt: 'Net 30 from invoice date',
-          supportsClaim: 'Due date within terms',
+          excerpt: 'billed at $0.012 per call',
+          supportsClaim: 'Overage validated',
         },
       ],
+      exceptions: [],
       approvalGate: {
         recommended: 'approve',
         confidence: 0.91,
-        summary: 'All material fields match. No blockers.',
+        summary: 'All material fields match.',
         blockers: [],
         policyRefs: ['POL-AP-AUTO-01', 'POL-OV-03'],
       },
-      trace: `extract(contract §5) → fee=4800
-extract(invoice lines) → platform 4800×2, overage 36750 @ 0.015
-compare(overage_rate) → contract 0.012 vs invoice 0.015 → apply POL-OV-03 tolerance → pass
-gate → approve (confidence 0.91)`,
+      trace: `compare(overage) → 0.015 vs 0.012 → POL-OV-03 → pass\ngate → approve`,
     },
     evaluatorHints: [
-      'Overage rate is wrong ($0.015 vs $0.012) — agent incorrectly passed via invented tolerance',
-      'Line 3 overage math: 2.45M × 0.015 = $36,750 but at contract rate should be $29,400',
-      'Double platform fee (Mar+Apr) may be valid but needs scrutiny — only one month in period?',
-      'Agent recommends approve despite material billing errors',
-      'Payment due date citation is fine',
+      'Overage rate wrong; invented tolerance policy',
+      'Overage total should be ~$29,400 not $36,750',
+      'Double platform fee may be unjustified',
     ],
   },
   {
     id: 'case-2402',
     caseRef: 'VAL-2025-2402',
+    caseType: 'contract',
     vendor: 'Harbor Legal Staffing Inc.',
     contractId: 'SOW-HLS-2025-04',
     invoiceNumber: 'HLS-99120',
@@ -129,84 +103,62 @@ gate → approve (confidence 0.91)`,
     dueDate: '2025-04-01',
     documents: {
       contract: {
-        title: 'Statement of Work — Harbor Legal Staffing',
-        body: `§2 Scope. 250 hours of paralegal support at $75/hour, not to exceed $18,750 total without written amendment.
+        title: 'Statement of Work — Harbor Legal',
+        body: `§2 Scope. 250 hours at $75/hour, not to exceed $18,750 without amendment.
 
-§3 Invoicing. Vendor submits monthly timesheet summary; Client pays Net 15.
+§3 Invoicing. Net 15.
 
-§4 Term. SOW effective 2025-02-01 through 2025-04-30.
-
-§7 Compliance. All invoices must include matter ID and supervising attorney code.`,
+§7 Compliance. Invoices must include matter ID and supervising attorney code.`,
       },
       invoice: {
         title: 'Invoice HLS-99120',
-        body: `Vendor: Harbor Legal Staffing Inc.
-Invoice date: 2025-03-20
-
-Paralegal support — March 2025
+        body: `Paralegal support — March 2025
 Hours: 250 | Rate: $75.00 | Amount: $18,750.00
 
 Matter ID: (not provided)
-Supervising attorney code: (not provided)
-
-TOTAL DUE: $18,750.00`,
+Supervising attorney code: (not provided)`,
       },
     },
     agentValidation: {
       status: 'pass',
       processedAt: '2025-03-21T11:02:08Z',
       modelVersion: 'validate-v2.4.1',
-      summary:
-        'Hours and rate match SOW ceiling. Total equals cap. Ready for payment.',
+      summary: 'Hours and rate match SOW ceiling.',
       fieldChecks: [
         {
-          field: 'Hourly rate',
-          contractValue: '$75/hr',
-          invoiceValue: '$75/hr',
+          field: 'Rate & total',
+          contractValue: '$75/hr, ≤$18,750',
+          invoiceValue: '$18,750',
           match: true,
-          agentVerdict: 'Exact match',
+          agentVerdict: 'At ceiling',
           citationId: 'cit-1',
         },
         {
-          field: 'Total amount',
-          contractValue: '≤ $18,750',
-          invoiceValue: '$18,750',
+          field: '§7 metadata',
+          contractValue: 'Required',
+          invoiceValue: 'Missing',
           match: true,
-          agentVerdict: 'At contract ceiling',
+          agentVerdict: 'Optional — not required for amount validation',
           citationId: 'cit-2',
-        },
-        {
-          field: 'Matter ID & attorney code',
-          contractValue: 'Required per §7',
-          invoiceValue: 'Not present',
-          match: true,
-          agentVerdict: 'Optional metadata — not required for amount validation',
-          citationId: 'cit-3',
         },
       ],
       citations: [
         {
           id: 'cit-1',
-          label: '§2 Scope (rate)',
+          label: '§2 Scope',
           sourceDoc: 'contract',
           excerpt: '250 hours of paralegal support at $75/hour',
           supportsClaim: 'Rate validated',
         },
         {
           id: 'cit-2',
-          label: '§2 Scope (cap)',
-          sourceDoc: 'contract',
-          excerpt: 'not to exceed $18,750 total',
-          supportsClaim: 'Total at cap is allowed',
-        },
-        {
-          id: 'cit-3',
           label: '§7 Compliance',
           sourceDoc: 'contract',
-          excerpt: 'All invoices must include matter ID and supervising attorney code',
-          supportsClaim: 'Marked optional by agent — incorrect',
+          excerpt: 'must include matter ID and supervising attorney code',
+          supportsClaim: 'Incorrectly marked optional',
         },
       ],
+      exceptions: [],
       approvalGate: {
         recommended: 'approve',
         confidence: 0.88,
@@ -214,20 +166,17 @@ TOTAL DUE: $18,750.00`,
         blockers: [],
         policyRefs: ['POL-AP-AUTO-01'],
       },
-      trace: `compare(rate, total) → pass
-check(§7 fields) → missing → classify optional → pass
-gate → approve`,
+      trace: `check(§7) → missing → optional → pass\ngate → approve`,
     },
     evaluatorHints: [
-      '§7 compliance fields missing — should block or hold, not approve',
-      '250 hours at cap in single month may be worth flagging (at ceiling immediately)',
-      'Citation cit-3 misrepresents requirement as optional',
-      'Net 15 terms not compared on invoice',
+      'Missing §7 fields should block or hold',
+      'Citation misrepresents compliance as optional',
     ],
   },
   {
     id: 'case-2403',
     caseRef: 'VAL-2025-2403',
+    caseType: 'exception',
     vendor: 'BrightOffice Supplies Co.',
     contractId: 'AGR-BOS-2023-09',
     invoiceNumber: 'BOS-44501',
@@ -235,36 +184,29 @@ gate → approve`,
     dueDate: '2025-03-28',
     documents: {
       contract: {
-        title: 'Office Supplies Agreement — BrightOffice',
-        body: `§3 Pricing. Catalog discount 12% off list price. List price schedule Exhibit A (updated 2024-11-01).
+        title: 'Office Supplies Agreement',
+        body: `§3 Pricing. 12% discount off list.
 
-§4 Invoicing. Invoices over $3,000 require dual approval per POL-DUAL-02.
+§4 Invoicing. Invoices over $3,000 require dual approval (POL-DUAL-02).
 
-§9 Termination. Agreement terminated effective 2025-01-31 per mutual notice. No orders after termination date.`,
+§9 Termination. Agreement terminated effective 2025-01-31.`,
       },
       invoice: {
         title: 'Invoice BOS-44501',
-        body: `Vendor: BrightOffice Supplies Co.
-Invoice date: 2025-03-10
-Ship date: 2025-03-05
-
+        body: `Invoice date: 2025-03-10
 Furniture bundle (list $3,682.50, 12% discount) — $3,240.50
-
-Note: Post-termination courtesy order approved verbally by ops.
-
-TOTAL DUE: $3,240.50`,
+Note: Post-termination courtesy order approved verbally.`,
       },
     },
     agentValidation: {
       status: 'partial',
       processedAt: '2025-03-11T08:45:00Z',
       modelVersion: 'validate-v2.4.1',
-      summary:
-        'Discount math verified. Agreement active. Dual approval threshold not met.',
+      summary: 'Discount verified. Dual approval required.',
       fieldChecks: [
         {
-          field: 'Discount (12%)',
-          contractValue: '12% off list',
+          field: 'Discount',
+          contractValue: '12%',
           invoiceValue: '$3,682.50 → $3,240.50',
           match: true,
           agentVerdict: 'Arithmetic correct',
@@ -272,19 +214,11 @@ TOTAL DUE: $3,240.50`,
         },
         {
           field: 'Agreement status',
-          contractValue: 'Active',
+          contractValue: 'Terminated 2025-01-31',
           invoiceValue: 'Post-termination order',
           match: true,
-          agentVerdict: 'Courtesy order exception documented on invoice',
+          agentVerdict: 'Courtesy exception on invoice note',
           citationId: 'cit-2',
-        },
-        {
-          field: 'Dual approval threshold',
-          contractValue: '> $3,000',
-          invoiceValue: '$3,240.50',
-          match: false,
-          agentVerdict: 'Requires dual approval',
-          citationId: 'cit-3',
         },
       ],
       citations: [
@@ -292,72 +226,68 @@ TOTAL DUE: $3,240.50`,
           id: 'cit-1',
           label: '§3 Pricing',
           sourceDoc: 'contract',
-          excerpt: 'Catalog discount 12% off list price',
-          supportsClaim: 'Discount applied correctly',
+          excerpt: '12% discount off list price',
+          supportsClaim: 'Discount correct',
         },
         {
           id: 'cit-2',
           label: '§9 Termination',
           sourceDoc: 'contract',
-          excerpt: 'Agreement terminated effective 2025-01-31',
-          supportsClaim: 'Agent claims active — citation actually shows terminated',
+          excerpt: 'terminated effective 2025-01-31',
+          supportsClaim: 'Agent treats as active — wrong',
+        },
+      ],
+      exceptions: [
+        {
+          code: 'CONTRACT_TERMINATED',
+          severity: 'critical',
+          message: 'Agreement terminated 2025-01-31; invoice dated 2025-03-10.',
+          suggestedAction: 'Reject or require reinstatement amendment',
         },
         {
-          id: 'cit-3',
-          label: '§4 Invoicing',
-          sourceDoc: 'contract',
-          excerpt: 'Invoices over $3,000 require dual approval',
-          supportsClaim: 'Dual approval required',
+          code: 'DUAL_APPROVAL_REQUIRED',
+          severity: 'warning',
+          message: 'Total $3,240.50 exceeds $3,000 threshold.',
+          suggestedAction: 'Second approver per POL-DUAL-02',
         },
       ],
       approvalGate: {
         recommended: 'hold_for_review',
         confidence: 0.72,
-        summary: 'Amount triggers dual approval workflow.',
-        blockers: ['Dual approval required (POL-DUAL-02)'],
+        summary: 'Dual approval workflow triggered.',
+        blockers: ['Dual approval required'],
         policyRefs: ['POL-DUAL-02'],
       },
-      trace: `discount_check → pass
-status_check → read §9 termination → override with invoice note "courtesy order" → pass
-dual_approval → amount 3240.50 > 3000 → hold`,
+      trace: `discount → pass\n§9 termination → ignored courtesy note → pass\nPOL-DUAL-02 → hold`,
     },
     evaluatorHints: [
-      'Contract terminated 2025-01-31 — invoice should fail, not partial pass on status',
-      'Agent cites §9 but concludes agreement active — contradiction',
-      'hold_for_review is reasonable for dual approval but misses termination blocker',
-      'Discount math is genuinely correct — good catch to praise',
+      'Terminated contract should fail validation',
+      'Agent only holds for dual approval, misses termination',
+      'Discount math is correct — note as positive',
     ],
   },
   {
     id: 'case-2404',
     caseRef: 'VAL-2025-2404',
+    caseType: 'invoice',
     vendor: 'DataStream Analytics GmbH',
     contractId: 'LIC-DSA-2025-01',
     invoiceNumber: 'DSA-DE-0033',
-    amountUsd: 9200,
+    amountUsd: 10923.6,
     dueDate: '2025-04-10',
     documents: {
       contract: {
-        title: 'Software License — DataStream Analytics',
-        body: `§1 License Fee. Annual license €8,500 (EUR), converted to USD at ECB rate on invoice date.
+        title: 'Software License — DataStream',
+        body: `§1 License Fee. €8,500/year, USD at ECB rate on invoice date.
 
-§2 VAT. German vendor invoices include 19% VAT shown separately; VAT is not part of license fee cap.
+§2 VAT. 19% VAT shown separately; not part of license cap.
 
-§5 Audit. Client may request usage audit with 30 days notice.
-
-ECB reference rate 2025-03-01: 1 EUR = 1.08 USD`,
+ECB rate 2025-03-01: 1 EUR = 1.08 USD`,
       },
       invoice: {
         title: 'Invoice DSA-DE-0033',
-        body: `Vendor: DataStream Analytics GmbH
-Invoice date: 2025-03-01
-Currency: EUR / USD equivalent shown
-
-License fee (annual) — €8,500.00
+        body: `License fee — €8,500.00 → $9,180.00 USD
 VAT 19% — €1,615.00
-USD equivalent (license only): $9,180.00
-USD equivalent (total incl. VAT): $10,923.60
-
 TOTAL DUE (USD): $10,923.60`,
       },
     },
@@ -365,57 +295,127 @@ TOTAL DUE (USD): $10,923.60`,
       status: 'fail',
       processedAt: '2025-03-02T14:20:11Z',
       modelVersion: 'validate-v2.4.1',
-      summary:
-        'License USD equivalent exceeds cap by $680. Recommend rejection.',
+      summary: 'License OK; total due blends VAT — reject.',
       fieldChecks: [
         {
-          field: 'License fee (USD equiv.)',
-          contractValue: '€8,500 → $9,180 @ 1.08',
-          invoiceValue: '$9,180 (license line)',
+          field: 'License (USD)',
+          contractValue: '$9,180 @ 1.08',
+          invoiceValue: '$9,180',
           match: true,
-          agentVerdict: 'Matches conversion',
+          agentVerdict: 'FX correct',
           citationId: 'cit-1',
         },
         {
-          field: 'VAT handling',
-          contractValue: 'VAT separate from cap',
-          invoiceValue: 'VAT €1,615 included in total due',
+          field: 'VAT in total due',
+          contractValue: 'Separate',
+          invoiceValue: 'Included in wire',
           match: false,
-          agentVerdict: 'Total due blends VAT — reject',
+          agentVerdict: 'Reject per POL-INTL-VAT-01',
           citationId: 'cit-2',
         },
       ],
       citations: [
         {
           id: 'cit-1',
-          label: '§1 License Fee + ECB rate',
+          label: '§1 + ECB',
           sourceDoc: 'contract',
-          excerpt: 'Annual license €8,500 (EUR), converted to USD at ECB rate',
-          supportsClaim: 'License line matches',
+          excerpt: '€8,500, converted at ECB rate',
+          supportsClaim: 'License line OK',
         },
         {
           id: 'cit-2',
           label: '§2 VAT',
           sourceDoc: 'contract',
           excerpt: 'VAT is not part of license fee cap',
-          supportsClaim: 'Reject due to blended total',
+          supportsClaim: 'Reject blended total',
+        },
+      ],
+      exceptions: [
+        {
+          code: 'VAT_BLEND',
+          severity: 'warning',
+          message: 'Payment total includes VAT in single wire amount.',
+          suggestedAction: 'Split license and VAT payment lines',
         },
       ],
       approvalGate: {
         recommended: 'reject',
         confidence: 0.85,
-        summary: 'License line OK but payment total includes VAT against policy.',
-        blockers: ['Total due includes VAT in single wire amount'],
+        summary: 'VAT handling blocks auto-approval.',
+        blockers: ['VAT in total due'],
         policyRefs: ['POL-INTL-VAT-01'],
       },
-      trace: `fx(8500 EUR, 1.08) → 9180 USD license → pass
-vat_check → total due 10923.60 includes VAT → fail → reject`,
+      trace: `fx → pass\nvat_blend → fail → reject`,
     },
     evaluatorHints: [
-      'License USD equivalent is correct — reject may be wrong if AP pays VAT separately in practice',
-      'Strong candidates note gate may be too harsh vs §2 intent (VAT separate)',
-      'Agent status fail but license field passed — nuanced judgment',
-      'ECB rate citation alignment is a positive',
+      'License conversion is correct',
+      'Reject vs hold is judgment call; cite §2 nuance',
+    ],
+  },
+  {
+    id: 'case-2405',
+    caseRef: 'VAL-2025-2405',
+    caseType: 'exception',
+    vendor: 'Apex Facilities Maintenance',
+    contractId: 'SVC-AFM-2024-02',
+    invoiceNumber: 'AFM-11203',
+    amountUsd: 2150,
+    dueDate: '2025-03-22',
+    documents: {
+      contract: {
+        title: 'Facilities SOW — Apex',
+        body: `§2 Services. Monthly janitorial $2,150 flat fee.
+§3 Invoicing. One invoice per calendar month.`,
+      },
+      invoice: {
+        title: 'Invoice AFM-11203',
+        body: `Invoice date: 2025-03-08 | March 2025 service
+Amount: $2,150.00`,
+      },
+      exceptionLog: {
+        title: 'AP Exception log',
+        body: `2025-03-05 — AFM-11201 paid $2,150.00 (February)
+2025-03-08 — AFM-11203 received — ERP flag DUPLICATE_PERIOD_RISK
+2025-03-09 — Agent validation VAL-2025-2405`,
+      },
+    },
+    agentValidation: {
+      status: 'pass',
+      processedAt: '2025-03-09T10:00:00Z',
+      modelVersion: 'validate-v2.4.1',
+      summary: 'Fee matches SOW. Recommend approval.',
+      fieldChecks: [
+        {
+          field: 'Monthly fee',
+          contractValue: '$2,150',
+          invoiceValue: '$2,150',
+          match: true,
+          agentVerdict: 'Matches §2',
+          citationId: 'cit-1',
+        },
+      ],
+      citations: [
+        {
+          id: 'cit-1',
+          label: '§2 Services',
+          sourceDoc: 'contract',
+          excerpt: 'Monthly janitorial $2,150 flat fee',
+          supportsClaim: 'Fee matches',
+        },
+      ],
+      exceptions: [],
+      approvalGate: {
+        recommended: 'approve',
+        confidence: 0.89,
+        summary: 'Recurring invoice — auto-approve eligible.',
+        blockers: [],
+        policyRefs: ['POL-AP-AUTO-01'],
+      },
+      trace: `fee → pass\nexception_log DUPLICATE_PERIOD_RISK → not ingested\ngate → approve`,
+    },
+    evaluatorHints: [
+      'ERP log shows duplicate period risk — agent ignored',
+      'Trace documents missing exception ingestion',
     ],
   },
 ]

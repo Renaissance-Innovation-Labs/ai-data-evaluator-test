@@ -3,6 +3,7 @@ import type { DetailTab, ValidationCase } from '../types'
 import { ApprovalGatePanel } from './ApprovalGatePanel'
 import { CitationsPanel } from './CitationsPanel'
 import { DocumentsPanel } from './DocumentsPanel'
+import { ExceptionsPanel } from './ExceptionsPanel'
 import { GateBadge, ValidationBadge } from './StatusBadge'
 import { ValidationReportPanel } from './ValidationReportPanel'
 
@@ -10,6 +11,7 @@ const TABS: { id: DetailTab; label: string }[] = [
   { id: 'documents', label: 'Source documents' },
   { id: 'validation', label: 'Validation report' },
   { id: 'citations', label: 'Citations' },
+  { id: 'exceptions', label: 'Exceptions' },
   { id: 'approval', label: 'Approval gate' },
   { id: 'trace', label: 'Agent trace' },
 ]
@@ -22,6 +24,7 @@ interface CaseDetailProps {
 export function CaseDetail({ validationCase, onBack }: CaseDetailProps) {
   const [tab, setTab] = useState<DetailTab>('documents')
   const v = validationCase.agentValidation
+  const exCount = v.exceptions.length
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -39,6 +42,8 @@ export function CaseDetail({ validationCase, onBack }: CaseDetailProps) {
               {validationCase.caseRef}
             </h2>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
+              <span className="capitalize">{validationCase.caseType}</span>
+              {' · '}
               {validationCase.vendor} · {validationCase.contractId} ·{' '}
               {validationCase.invoiceNumber}
             </p>
@@ -64,6 +69,11 @@ export function CaseDetail({ validationCase, onBack }: CaseDetailProps) {
               }`}
             >
               {t.label}
+              {t.id === 'exceptions' && exCount > 0 && (
+                <span className="ml-1.5 rounded-full bg-amber-500/20 px-1.5 text-[10px] text-amber-400">
+                  {exCount}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -73,6 +83,7 @@ export function CaseDetail({ validationCase, onBack }: CaseDetailProps) {
         {tab === 'documents' && <DocumentsPanel documents={validationCase.documents} />}
         {tab === 'validation' && <ValidationReportPanel validation={v} />}
         {tab === 'citations' && <CitationsPanel citations={v.citations} />}
+        {tab === 'exceptions' && <ExceptionsPanel exceptions={v.exceptions} />}
         {tab === 'approval' && <ApprovalGatePanel gate={v.approvalGate} />}
         {tab === 'trace' && (
           <pre className="whitespace-pre-wrap rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4 font-mono text-sm text-[#c5d0de]">

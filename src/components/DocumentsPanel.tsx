@@ -9,6 +9,7 @@ export function DocumentsPanel({ documents }: DocumentsPanelProps) {
     documents.contract,
     documents.invoice,
     ...(documents.purchaseOrder ? [documents.purchaseOrder] : []),
+    ...(documents.exceptionLog ? [documents.exceptionLog] : []),
   ]
 
   return (
